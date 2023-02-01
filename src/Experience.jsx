@@ -75,7 +75,7 @@ const Experience = () => {
 
     let gridMouseX = count * (pointer.x * 0.5 + 0.5);
     let gridMouseY = count * (pointer.y * 0.5 + 0.5);
-    let maxDist = 2;
+    let maxDist = 4;
     for (let i = 0; i < count; i++) {
       for (let j = 0; j < count; j++) {
         let distance = (gridMouseX - i) ** 2 + (gridMouseY - j) ** 2;
