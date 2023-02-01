@@ -29,7 +29,7 @@ const Experience = () => {
   dataTexture.type = THREE.UnsignedByteType;
   dataTexture.needsUpdate = true;
   const t = new THREE.TextureLoader().load("./bw.jpeg");
-
+  t.wrapS = t.wrapT = THREE.MirroredRepeatWrapping;
   const shaderMaterial = new THREE.ShaderMaterial({
     vertexShader,
     fragmentShader,
@@ -42,13 +42,27 @@ const Experience = () => {
     },
   });
 
+  let vX = 0;
+  let vY = 0;
+  let prevY = 0;
+  let prevX = 0;
   useFrame(({ clock, size, pointer }) => {
-    shaderMaterial.uniforms.time.value = clock.elapsedTime;
-    shaderMaterial.uniforms.mouse.value = {
+    const mouse = {
       x: pointer.x * 0.5 + 0.5,
       y: pointer.y * 0.5 + 0.5,
     };
+    shaderMaterial.uniforms.time.value = clock.elapsedTime;
+    shaderMaterial.uniforms.mouse.value = {
+      x: mouse.x,
+      y: mouse.y,
+    };
 
+    // mouse
+    vX = mouse.x - prevX;
+    vY = mouse.y - prevY;
+
+    prevX = mouse.x;
+    prevY = mouse.y;
     // resolution
 
     let a1, a2;
@@ -69,8 +83,8 @@ const Experience = () => {
     const data = dataTexture.image.data;
 
     for (let i = 0; i < data.length; i += 4) {
-      // data[i] *= 0.9555;
-      // data[i + 1] *= 0.955;
+      data[i] *= 0.9555;
+      data[i + 1] *= 0.955;
     }
 
     let gridMouseX = count * (pointer.x * 0.5 + 0.5);
@@ -83,11 +97,17 @@ const Experience = () => {
 
         if (distance < maxDistSq) {
           let index = (i + count * j) * 4;
-          data[index] = 0;
-          data[index + 1] = 0;
+
+          let power = Math.sqrt(distance) / maxDistSq;
+
+          data[index] += 100 * vX;
+          data[index + 1] += 100 * vY;
         }
       }
     }
+
+    vX *= 0.9;
+    vY *= 0.9;
 
     dataTexture.needsUpdate = true;
   });
