@@ -6,7 +6,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 const Experience = () => {
   const { size } = useThree();
 
-  const count = 32;
+  const count = 1024;
   const dataTexture = useMemo(() => {
     const width = count;
     const height = count;
@@ -89,7 +89,7 @@ const Experience = () => {
 
     let gridMouseX = count * (pointer.x * 0.5 + 0.5);
     let gridMouseY = count * (pointer.y * 0.5 + 0.5);
-    let maxDist = 4;
+    let maxDist = 100;
     for (let i = 0; i < count; i++) {
       for (let j = 0; j < count; j++) {
         let distance = (gridMouseX - i) ** 2 + (gridMouseY - j) ** 2;
@@ -98,10 +98,10 @@ const Experience = () => {
         if (distance < maxDistSq) {
           let index = (i + count * j) * 4;
 
-          let power = Math.sqrt(distance) / maxDistSq;
+          let power = maxDistSq / Math.sqrt(distance);
 
-          data[index] += 100 * vX;
-          data[index + 1] += 100 * vY;
+          data[index] += 100 * vX * power;
+          data[index + 1] += 100 * vY * power;
         }
       }
     }
